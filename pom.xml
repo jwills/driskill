@@ -1,0 +1,203 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>driskill</groupId>
+  <artifactId>driskill</artifactId>
+  <version>0.1.0</version>
+  <packaging>pom</packaging>
+
+  <name>Driskill</name>
+  <url>http://github.com/jwills/driskill</url>
+  <description>Either a hotel in Austin, TX or a distributed collections API for Scala</description>
+
+  <modules>
+    <module>core</module>
+    <module>crunch</module>
+    <module>spark</module>
+  </modules>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <java.source.version>1.6</java.source.version>
+    <java.target.version>1.6</java.target.version>
+
+    <!-- Versions for dependencies -->
+    <avro.version>1.7.0</avro.version>
+    <hadoop.version>2.0.0-mr1-cdh4.2.0</hadoop.version>
+    <crunch.version>0.6.0-cdh4.2.0</crunch.version>
+    <javassist.version>3.16.1-GA</javassist.version>
+    <guava.version>11.0.2</guava.version>
+    <spark.version>0.7.0</spark.version>
+    <scala.version>2.9.2</scala.version>
+
+    <!-- Versions for plugins -->
+    <compiler.plugin.version>2.3.2</compiler.plugin.version>
+    <dependency.plugin.version>2.6</dependency.plugin.version>
+    <surefire.plugin.version>2.12</surefire.plugin.version>
+    <javadoc.plugin.version>2.8</javadoc.plugin.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-client</artifactId>
+        <version>${hadoop.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.crunch</groupId>
+        <artifactId>crunch-core</artifactId>
+        <version>${crunch.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.spark-project</groupId>
+        <artifactId>spark-core_${scala.version}</artifactId>
+        <version>${spark.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-library</artifactId>
+        <version>${scala.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-compiler</artifactId>
+        <version>${scala.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>driskill</groupId>
+        <artifactId>driskill-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>driskill</groupId>
+        <artifactId>driskill-crunch</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>driskill</groupId>
+        <artifactId>driskill-spark</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>${javassist.version}</version>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>maven-hadoop</id>
+      <name>Hadoop Releases</name>
+      <url>https://repository.cloudera.com/content/repositories/releases/</url>
+    </repository>
+    <repository>
+      <id>cloudera-local</id>
+      <name>Cloudera Snapshots</name>
+      <url>https://repository.cloudera.com/artifactory/libs-release-local/</url>
+    </repository>
+    <repository>
+      <id>spray</id>
+      <name>Spray (Spark Repo)</name>
+      <url>http://repo.spray.cc/</url>
+    </repository>
+  </repositories>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${compiler.plugin.version}</version>
+          <configuration>
+            <source>${java.source.version}</source>
+            <target>${java.target.version}</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${dependency.plugin.version}</version>
+          <executions>
+            <execution>
+              <phase>install</phase>
+              <goals>
+                <goal>copy-dependencies</goal>
+              </goals>
+              <configuration>
+                <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                <overWriteReleases>false</overWriteReleases>
+                <overWriteSnapshots>false</overWriteSnapshots>
+                <overWriteIfNewer>true</overWriteIfNewer>
+                <excludeScope>provided</excludeScope>
+                <excludeTransitive>true</excludeTransitive>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${surefire.plugin.version}</version>
+          <configuration>
+            <argLine>-Xmx1024m</argLine>
+          </configuration>
+        </plugin>
+        <!-- generate Javadoc -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${javadoc.plugin.version}</version>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.scala-tools</groupId>
+          <artifactId>maven-scala-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compile</goal>
+                <goal>testCompile</goal>
+              </goals>
+              <configuration>
+                <args>
+                  <arg>-deprecation</arg>
+                  <arg>-dependencyfile</arg>
+                  <arg>${project.build.directory}/.scala_dependencies</arg>
+                </args>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
