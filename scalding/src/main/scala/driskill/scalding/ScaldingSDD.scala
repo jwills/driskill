@@ -4,9 +4,8 @@ import driskill.core.SDD
 import com.twitter.scalding.{TypedPipe, Tsv}
 
 class ScaldingSDD[T](val pipe: TypedPipe[T], val sc: ScaldingContext) extends SDD[T] {
-  import com.twitter.scalding.Dsl
-  import com.twitter.scalding.Mode
-  import cascading.flow.FlowDef
+  import com.twitter.scalding.TDsl._
+  import com.twitter.scalding.Dsl._
 
   def flatMap(f: T => TraversableOnce[String]) = {
     val fp = f.asInstanceOf[Function1[T, Iterable[String]]]
@@ -21,6 +20,6 @@ class ScaldingSDD[T](val pipe: TypedPipe[T], val sc: ScaldingContext) extends SD
   }
 
   def saveAsTextFile(path: String) {
-    // no-op
+    // TODO: Can't quite figure out how to get this to work
   }
 }

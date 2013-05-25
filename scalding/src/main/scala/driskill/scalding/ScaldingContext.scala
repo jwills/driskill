@@ -16,6 +16,6 @@ class ScaldingContext(val mode: Mode) extends DriskillContext {
   }
 
   def done() {
-    // no-op for now
+    mode.newFlowConnector(mode.config).connect(flowDef).complete()
   }
 }
