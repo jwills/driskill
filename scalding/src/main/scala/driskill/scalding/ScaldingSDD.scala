@@ -13,7 +13,7 @@ class ScaldingSDD[T](val pipe: TypedPipe[T], val sc: ScaldingContext) extends SD
     new ScaldingSDD[String](pipe.flatMap(fp), sc)
   }
 
-  def countByValue[U]()(implicit ev: T <:< U, ord: Ordering[U]) = {
+  def countByValue[U]()(implicit ev: T <:< U, cm: ClassManifest[U], ord: Ordering[U]) = {
     new ScaldingSDD[(U, Long)](pipe
       .map { t => (t.asInstanceOf[U], 1L) }
       .group
