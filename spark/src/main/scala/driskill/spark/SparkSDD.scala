@@ -10,7 +10,7 @@ class SparkSDD[T: ClassManifest](val rdd: RDD[T]) extends SDD[T] {
     new SparkSDD[String](rdd.flatMap(f))
   }
 
-  def countByValue() = {
+  def countByValue = {
     new SparkSDD[(T, Long)](rdd.map(t => (t, 1L)).reduceByKey( _ + _))
   }
 

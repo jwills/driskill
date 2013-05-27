@@ -15,7 +15,7 @@ class CrunchSDD[T](val pc: PCollection[T]) extends SDD[T] {
     new CrunchSDD[String](pc.parallelDo(flatMapFn(f), Avros.strings()))
   }
 
-  def countByValue() = {
+  def countByValue = {
     val count = pc.count()
     val map = mapFn((x: CPair[T, JLong]) => (x.first(), x.second().longValue()))
     new CrunchSDD[(T, Long)](count.parallelDo(map, tuple2(pc.getPType(), longs)))
